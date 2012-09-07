@@ -8,27 +8,39 @@ from clint.textui import colored # Colored text output
 from clint.textui import indent,puts # Allows indenting text
 #-------------------- End clint requirements ---------------------------
 
+#------------------- Begin text formatting requirements ----------------
+import textwrap
+wrapit = textwrap.TextWrapper()
+wrapit.width = 70 # Wrap at 70 columns
+wrapit.replace_whitespace = True
+#------------------- End text formatting requirements ------------------
+
 import sys
 
 mymarker = "--jp--> " # What I'll put at the beginning of my comments
 modmarker = "hasmods" # Added to output file if it has already been written
 
-regdict = {'Reg 0x00A1':'Register 0xa1 is the bandwidth configuration register',
-           'Reg 0x00A7':'Register 0xa7 is the voltmeter configuration register',
-           'Reg 0x00A5':'Register 0xa5 is the AC switch',
-           'Reg 0x00A6':'Register 0xa6 is the I/V configuration register',
-           'Reg 0x00A9':'Register 0xa9 is the front panel E bias rejection DAC',
-           'Reg 0x0080':'Register 0x80 is the buddy box configuration register',
-           'Reg 0x0032':'Register 0x32 is the waveform generator bias DAC',
-           'Reg 0x0002':'Register 0x2 is the signal generation board configuration register',
-           'Reg 0x0005':'Register 0x5 is the AC switch control register',
-           'Reg 0x00A4':'Register 0xa4 is the external input gain DAC',
-           'Reg 0x00A5':'Register 0xa5 is the front panel I BNC gain DAC',
-           'Reg 0x00AD':'Register 0xad is the rear panel I BNC gain DAC',
-           'Reg 0x0093':'Register 0x93 is the I ADC data',
-           'Reg 0x0096':'Register 0x96 is the I ADC calibration value',
-           'Reg 0x0000':'Last entry'
-          }
+# Dictionary of <register> : <register name>
+regnamedict = {'Reg 0x00A1':'Register 0xa1 is the bandwidth configuration register',
+               'Reg 0x00A7':'Register 0xa7 is the voltmeter configuration register',
+               'Reg 0x00A5':'Register 0xa5 is the AC switch',
+               'Reg 0x00A6':'Register 0xa6 is the I/V configuration register',
+               'Reg 0x00A9':'Register 0xa9 is the front panel E bias rejection DAC',
+               'Reg 0x0080':'Register 0x80 is the buddy box configuration register',
+               'Reg 0x0032':'Register 0x32 is the waveform generator bias DAC',
+               'Reg 0x0002':'Register 0x2 is the signal generation board configuration register',
+               'Reg 0x0005':'Register 0x5 is the AC switch control register',
+               'Reg 0x00A4':'Register 0xa4 is the external input gain DAC',
+               'Reg 0x00A5':'Register 0xa5 is the front panel I BNC gain DAC',
+               'Reg 0x00AD':'Register 0xad is the rear panel I BNC gain DAC',
+               'Reg 0x0093':'Register 0x93 is the I ADC data',
+               'Reg 0x0096':'Register 0x96 is the I ADC calibration value',
+               'Reg 0x0000':'Last entry'
+}
+
+# Dictionary of <register> : <register notes>
+regnotedict = {'Reg 0x0096':(wrapit.fill('For the I ADC, remember that the iADC voltage scaling values tabulated in fpga4.doc get rolled up into the I ADC calibration factor.  Converting hex numbers read from register 0x93 into volts is always: volts = <hex number>/0x200000'))
+}
 
 
 """ makenote(note string)
@@ -49,10 +61,19 @@ def regnames(infile,outfilename):
     for line in rawfile.split('\n'):
         fot.write(line + '\n')
         if not line.startswith(mymarker):
-            for key in regdict:
+            # Write the register name
+            for key in regnamedict:
                 if (line.count(key) != 0):
-                    linestring = makenote(regdict[key])
+                    linestring = makenote(regnamedict[key])
                     fot.write(linestring + '\n')
+            # Write the register notes
+            for key in regnotedict:
+                if (line.count(key) != 0):
+                    for noteline in regnotedict[key].splitlines():
+                        fot.write(mymarker + noteline + '\n')
+
+
+
                     
 
 """ linenumber (input file object, output file name)
