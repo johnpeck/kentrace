@@ -1,10 +1,7 @@
+#!/cygdrive/c/Python27/python
 """ kentrace.py
     A collection of scripts that operate on Ken's debug traces """
 
-#-------------------- Begin gnuplot requirements -----------------------
-from numpy import *
-import Gnuplot, Gnuplot.funcutils # For plotting with gnuplot
-#-------------------- End gnuplot requirements -------------------------
 
 #-------------------- Begin clint requirements -------------------------
 from clint.textui import colored # Colored text output
