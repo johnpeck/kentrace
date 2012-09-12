@@ -85,8 +85,9 @@ def linenumber(infile,outfilename):
     fot = open(outfilename,'w') # Re-open the file for writing
     linecount = 1
     for line in rawfile.split('\n'):
-        fot.write(str(linecount) + ' ' +line + '\n')
-        linecount += 1
+        if not line.startswith(mymarker):
+            fot.write(str(linecount) + ' ' +line + '\n')
+            linecount += 1
     fot.close()
     
     
@@ -98,6 +99,26 @@ def cleanfile(infile,outfilename):
     for line in rawfile.split('\r'):
         fot.write(line + '\n')
     fot.close()
+
+""" addheader(input file object, output file name)
+    Adds a header to the beginning of the file. """
+def addheader(infile,outfilename):
+    fot = open(outfilename,'r')
+    rawfile = fot.read()
+    fot.close()
+    fot = open(outfilename,'w') # Re-open the file for writing
+    headstr = wrapit.fill("Worked-up output trace from EC301's debug port.  The ecscripts directory contains fcal.py, which has functions related to decomposing hex register settings into human-readable states:")
+    for line in headstr.splitlines():
+        fot.write(mymarker + line + '\n') # Write the long part of the header
+    fot.write(mymarker + "bwbitview(integer) -- Bandwidth configuration register" + '\n')
+    fot.write(mymarker + "ivbitview(integer) -- Internal I/V configuration register" + '\n')
+    fot.write(mymarker + "bbbitview(integer) -- Buddy box configuration register" + '\n')
+    fot.write(mymarker + "vmbitview(integer) -- Internal voltmeter configuration register" + '\n')
+    for line in rawfile.split('\n'):
+        fot.write(line + '\n') # Write the rest of the file
+    fot.close()
+
+    
  
 
         
@@ -117,6 +138,7 @@ def main():
     outfilename = infile.split(".")[0] + ".mrk"
     cleanfile(fin,outfilename)
     linenumber(fin,outfilename)
+    addheader(fin,outfilename)
     regnames(fin,outfilename)
     print('Wrote file ' + outfilename)
     fin.close()
