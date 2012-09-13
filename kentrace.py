@@ -35,11 +35,14 @@ regnamedict = {'Reg 0x00A1':'Register 0xa1 is the bandwidth configuration regist
                'Reg 0x00AD':'Register 0xad is the rear panel I BNC gain DAC',
                'Reg 0x0093':'Register 0x93 is the I ADC data',
                'Reg 0x0096':'Register 0x96 is the I ADC calibration value',
+               'Query 0x0092':'Register 0x92 is the E ADC data',
+               'Query 0x0093':'Register 0x93 is the I ADC data',
+               'Query 0x0094':'Register 0x94 is the Synchronous ADC data',
                'Reg 0x0000':'Last entry'
 }
 
 # Dictionary of <register> : <register notes>
-regnotedict = {'Reg 0x0096':(wrapit.fill('For the I ADC, remember that the iADC voltage scaling values tabulated in fpga4.doc get rolled up into the I ADC calibration factor.  Converting hex numbers read from register 0x93 into volts is always: volts = <hex number>/0x200000'))
+regnotedict = {'Reg 0x0096':(wrapit.fill('For the I ADC, remember that the full-scale output in hex is range dependent.  0x20c49b is full-scale for the 1mA range (indicates that 1mA is flowing), while 0x2af31d is full-scale for the 10nA range.  These values are tabulated in the FPGA design document.'))
 }
 
 
